@@ -1,0 +1,119 @@
+CREATE TABLE pessoa (
+    pessoaID INTEGER     PRIMARY KEY AUTOINCREMENT,
+    nome     STRING (30),
+    cpf      CHAR (11),
+    rg       CHAR (9) 
+);
+
+
+CREATE TABLE psicopedagogo (
+    psicopedagogoID INTEGER PRIMARY KEY AUTOINCREMENT,
+    pessoaID        INTEGER REFERENCES pessoa (pessoaID) 
+);
+
+CREATE TABLE agendaAtendimento (
+    psicopedagogoID INTEGER,
+    dia        INTEGER,
+    hora       INTEGER,
+    PRIMARY KEY (psicopedagogoID, dia, hora)
+    FOREIGN KEY (psicopedagogoID) REFERENCES psicopedagogo (psicopedagogoID)
+);
+
+CREATE TABLE situacao (
+    situacaoID INTEGER,
+    nome       char(20),
+    PRIMARY KEY (situacaoID)
+    
+);
+
+CREATE TABLE paciente (
+    pacienteID INTEGER,
+    pessoaID        INTEGER,
+    responsavelID   INTEGER,
+    situacaoID,
+    psicopedagogoID,
+    PRIMARY KEY (pacienteID),
+    FOREIGN KEY (psicopedagogoID) REFERENCES psicopedagogo (psicopedagogoID),
+    FOREIGN KEY (pessoaID) REFERENCES pessoa (pessoaID),
+    FOREIGN KEY (responsavelID) REFERENCES pessoa (pessoaID),
+    FOREIGN KEY (situacaoID) REFERENCES situacao (situacaoID)
+);
+
+CREATE TABLE IF NOT EXISTS sala (
+    salaID INTEGER,
+    nome       CHAR(20),
+    PRIMARY KEY (salaID)
+);
+
+CREATE TABLE IF NOT EXISTS atendimento (
+    atendimentoID INTEGER, 
+    psicopedagogoID INTEGER,
+    dataHora DATETIME,
+    pacienteID INTEGER,
+    salaID INTEGER,
+    obs CHAR(1000),
+    nome       CHAR(20),
+    PRIMARY KEY (atendimentoID),
+    FOREIGN KEY (psicopedagogoID) REFERENCES psicopedagogo (psicopedagogoID),
+    FOREIGN KEY (pacienteID) REFERENCES paciente(pacienteID),
+    FOREIGN KEY (salaID) REFERENCES sala(salaID)
+);
+
+CREATE TABLE IF NOT EXISTS tipoEndereco (
+    tipoID INTEGER, 
+    nome       CHAR(20),
+    PRIMARY KEY (tipoID)
+);
+
+CREATE TABLE IF NOT EXISTS endereco (
+    enderecoID INTEGER,
+    tipo INTEGER, 
+    pessoaID   INTEGER,
+    nome CHAR(50),
+    numero int,
+    complemento CHAR(50),
+    PRIMARY KEY (enderecoID),
+    FOREIGN KEY (tipo) REFERENCES tipoEndereco(tipoID),
+    FOREIGN KEY (pessoaID) REFERENCES pessoa (pessoaID)
+);
+
+CREATE TABLE IF NOT EXISTS teste (
+    testeID INTEGER,
+    nome CHAR(50),
+    PRIMARY KEY (testeID)
+);
+
+CREATE TABLE IF NOT EXISTS resultado (
+    resultadoID INTEGER,
+    testeID INTEGER,
+    pacienteID INTEGER,
+    resultado CHAR(50),
+    PRIMARY KEY (resultadoID),
+    FOREIGN KEY (testeID) REFERENCES teste (testeID),
+    FOREIGN KEY (pacienteID) REFERENCES paciente (pacienteID)
+);
+
+CREATE TABLE IF NOT EXISTS tipoResposta (
+    tipoRespostaID INTEGER,
+    tipo CHAR(50),
+    PRIMARY KEY (tipoRespostaID)
+);
+
+CREATE TABLE IF NOT EXISTS pergunta (
+    perguntaID INTEGER,
+    testeID INTEGER,
+    pergunta CHAR(100),
+    tipoRespostaID INTEGER,
+    PRIMARY KEY (perguntaID),
+    FOREIGN KEY (testeID) REFERENCES teste(testeID),
+    FOREIGN KEY (tipoRespostaID) REFERENCES tipoResposta (tipoRespostaID)
+);
+
+CREATE TABLE IF NOT EXISTS sugestaoDeResposta (
+    sugestaoID INTEGER,
+    perguntaID INTEGER,
+    sugestao CHAR(100),
+    PRIMARY KEY (sugestaoID),
+    FOREIGN KEY (perguntaID) REFERENCES pergunta(perguntaID)
+);
+
