@@ -117,3 +117,9 @@ CREATE TABLE IF NOT EXISTS sugestaoDeResposta (
     FOREIGN KEY (perguntaID) REFERENCES pergunta(perguntaID)
 );
 
+CREATE TABLE IF NOT EXISTS login (
+    login    STRING (20)  PRIMARY KEY,
+    pessoaID INTEGER      REFERENCES pessoa (pessoaID),
+    senha    STRING (100) 
+);
+
